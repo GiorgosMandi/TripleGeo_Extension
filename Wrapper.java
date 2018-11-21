@@ -9,8 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,7 +76,6 @@ public class Wrapper {
                         // found the url and downloads the file
                         String file_url = geofabrik_url + anchors_continent.get(1).attr("href");
 
-
                         System.out.println("Downloads from " + file_url);
                        /*Connection.Response resultImageResponse = Jsoup.connect(file_url)
                                 .ignoreContentType(true).execute();
@@ -92,7 +90,7 @@ public class Wrapper {
 
                         String new_url = geofabrik_url + anchors_continent.get(0).attr("href");
                         System.out.println("\n");
-                        if (search_geofabrik_tables(new_url, level + 1))
+                        if (search_geofabrik_tables(new_url, level + 1, writer))
                             return true;
                     }
                 }
@@ -104,15 +102,14 @@ public class Wrapper {
     }
 
 
-    public static void main(@NotNull String[] args) {
-        
-        requested_area = args[args.length -1];
+    public static void main(@NotNull String[] args)  {
 
+        requested_area = args[args.length -1].toLowerCase().replace(" ", "_");
 
         String file_path = dataset_path.toString() + "/" + requested_area + ".osm.pbf";
         boolean recent_file_exist = false;
 
-        //Checks whether or not the file exist AND it is a recent one
+        //Checks whether the file exist AND if it is a recent one
         //firstly checks if there is a folder..then checks if the file exists
         if (!Files.exists(dataset_path))
             new File(dataset_path.toString()).mkdirs();
@@ -137,7 +134,7 @@ public class Wrapper {
         }
 
         if (!recent_file_exist) {
-            boolean found = search_geofabrik_tables(geofabrik_url, 1);
+            boolean found = search_geofabrik_tables(geofabrik_url, 1, writer);
             System.out.println("FOUND? " + found);
         }
 
@@ -145,6 +142,5 @@ public class Wrapper {
 
         // Extractor extractor = new Extractor();
         // extractor.main(args);
-
     }
 }
