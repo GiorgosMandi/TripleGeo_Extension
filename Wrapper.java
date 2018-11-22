@@ -1,7 +1,4 @@
 
-package eu.slipo.athenarc.triplegeo;
-
-
 
 import org.ini4j.Ini;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +18,7 @@ import java.util.Arrays;
 public class Wrapper {
 
 
-    private static Path dataset_path = Paths.get(System.getProperty("user.dir") + "/test/data/downloaded/");
+    private static Path dataset_path = Paths.get("./test/data/downloaded/");
     private static String geofabrik_areas_file = dataset_path.toString() + "/geofabrik_areas.ini";
 
 
@@ -29,6 +26,7 @@ public class Wrapper {
     public static void main(@NotNull String[] args) throws IOException {
 
         if (args.length >= 2) {
+            Extractor extractor = new Extractor();
             Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
             String config_filename = args[0];
             String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
@@ -39,9 +37,13 @@ public class Wrapper {
 
             int today = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).getDayOfYear();
             String[] paths = new String[requested_areas.length];
+            boolean resolved;
 
+            //firstly checks if a recent file exist, if it doesn't, it searches in .ini file to find the url in order
+            // to download it
             for (int i = 0; i < requested_areas.length; i++) {
-                boolean recent_file_exist = false;
+                System.out.println( "\n\n\n" + requested_areas[i] );
+                resolved = false;
                 paths[i] = dataset_path.toString() + "/" + requested_areas[i] + ".osm.pbf";
                 String clean_area = requested_areas[i].toLowerCase().replace(" ", "_");
 
@@ -56,15 +58,18 @@ public class Wrapper {
                     }
                     int creation_day = LocalDateTime.ofInstant(creation_date, ZoneOffset.UTC).getDayOfYear();
 
-                    if (creation_day == today)
-                        recent_file_exist = true;
+                    if (creation_day == today) {
+                        System.out.println("Recent file for \"" + requested_areas[i] + "\" exists");
+                        resolved = true;
+                    }
                 }
 
-                if (!recent_file_exist) {
+                if (!resolved) {
+
                     for (String area : geofabrik_areas_ini.get("Areas").keySet()) {
                         if (clean_area.equals(area)) {
+                            resolved = true;
                             String area_url = geofabrik_areas_ini.get("Areas").get(area);
-
                             System.out.println("Downloads from " + area_url);
 
                             // Downloads and stores the file in the dataset folder
@@ -76,35 +81,36 @@ public class Wrapper {
                         }
                     }
                 }
-
-                // reads the given configuration file and changes the inputfile and the inputformat
-                File config_file = new File(config_filename);
-                BufferedReader reader = new BufferedReader(new FileReader(config_file));
-                String line;
-                StringBuilder new_text = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    String value;
-                    if (line.contains("inputFormat"))
-                        value = "inputFormat = OSM_PBF" + "\r\n";
-                    else if (line.contains("inputFiles"))
-                        value = "inputFiles = " + paths[i] + "\r\n";
-                    else
-                        value = line + "\r\n";
-                    new_text.append(value);
+                if (!resolved){
+                    System.out.println("We couldn't resolve " + requested_areas[i]);
                 }
-                reader.close();
-                FileWriter writer = new FileWriter("./test/conf/produced.conf");
-                writer.write(new_text.toString());
-                writer.close();
+                else {
+                    // rewrite the given configuration file changing its inputfile and its inputformat
+                    File config_file = new File(config_filename);
+                    BufferedReader reader = new BufferedReader(new FileReader(config_file));
+                    String line;
+                    StringBuilder new_text = new StringBuilder();
+                    while ((line = reader.readLine()) != null) {
+                        String value;
+                        if (line.contains("inputFormat"))
+                            value = "inputFormat = OSM_PBF" + "\r\n";
+                        else if (line.contains("inputFiles"))
+                            value = "inputFiles = " + paths[i] + "\r\n";
+                        else
+                            value = line + "\r\n";
+                        new_text.append(value);
+                    }
+                    reader.close();
+                    FileWriter writer = new FileWriter("./test/conf/produced.conf");
+                    writer.write(new_text.toString());
+                    writer.close();
 
-
-                Extractor extractor = new Extractor();
-                extractor.main(args);
+                    // calls Extractor using the produced configuration file
+                    String[] main_args = {"./test/conf/produced.conf"};
+                    extractor.main(main_args);
+                }
             }
 
-
-            // Extractor extractor = new Extractor();
-            // extractor.main(args);
         }
         else{
             System.out.println("Wrong Input");
