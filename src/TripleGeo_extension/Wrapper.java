@@ -19,16 +19,25 @@ public class Wrapper {
 
         if (args.length >= 2) {
             String dataset_path = "./datasets/";
-            String tripleGEO_Path =  "../TripleGeo";
+            String tripleGEO_path = "../TripleGeo/";
+            String[] tripleGEO_command = {"java", "-cp", tripleGEO_path + "target/triplegeo-1.6-SNAPSHOT.jar",
+                    "eu.slipo.athenarc.triplegeo.Extractor"};
             String geofabrik_areas_file = "./config/geofabrik_areas.ini";
-            Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
-
-            String config_filename = args[0];
-            String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
+            String produced_config_file = "./config/produced.conf";
 
             // Checks if the folder exist
             if (!Files.exists(Paths.get(dataset_path)))
                 new File(dataset_path).mkdirs();
+            if (!Files.exists(Paths.get(geofabrik_areas_file))) {
+                Ini_Constructor ini_constructor = new Ini_Constructor(geofabrik_areas_file);
+                ini_constructor.Construct_File();
+            }
+
+            Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
+            String config_filename = args[0];
+            String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
+
+
 
             int today = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).getDayOfYear();
             String[] paths = new String[requested_areas.length];
@@ -52,7 +61,6 @@ public class Wrapper {
                         System.exit(1);
                     }
                     int creation_day = LocalDateTime.ofInstant(creation_date, ZoneOffset.UTC).getDayOfYear();
-
                     if (creation_day == today) {
                         System.out.println("Recent file for \"" + requested_areas[i] + "\" exists");
                         resolved = true;
@@ -60,14 +68,13 @@ public class Wrapper {
                 }
 
                 if (!resolved) {
-
                     for (String area : geofabrik_areas_ini.get("Areas").keySet()) {
                         if (clean_area.equals(area)) {
                             resolved = true;
                             String area_url = geofabrik_areas_ini.get("Areas").get(area);
                             System.out.println("Downloads from " + area_url);
 
-                            // Downloads and stores the file in the dataset folder
+                            //Downloads and stores the file in the dataset folder
                             Connection.Response resultImageResponse = Jsoup.connect(area_url).ignoreContentType(true).execute();
                             FileOutputStream out = (new FileOutputStream(new java.io.File(paths[i])));
                             out.write(resultImageResponse.bodyAsBytes());  // resultImageResponse.body() is where the image's contents are.
@@ -96,10 +103,17 @@ public class Wrapper {
                         new_text.append(value);
                     }
                     reader.close();
-                    FileWriter writer = new FileWriter("./config/produced.conf");
+                    FileWriter writer = new FileWriter(produced_config_file);
                     writer.write(new_text.toString());
                     writer.close();
 
+
+                    Process exctractor_process = Runtime.getRuntime().exec(tripleGEO_command);
+
+                    if (exctractor_process.exitValue() == 0)
+                        System.out.println("TripleGeo execution of \"" + requested_areas[i] + "\" completed successfully");
+                    else
+                        System.out.println("TripleGeo execution of \"" + requested_areas[i] + "\" failed");
                 }
             }
 
