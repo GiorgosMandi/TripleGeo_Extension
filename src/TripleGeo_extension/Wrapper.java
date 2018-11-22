@@ -1,7 +1,6 @@
-
+package TripleGeo_extension;
 
 import org.ini4j.Ini;
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -18,15 +17,15 @@ import java.util.Arrays;
 public class Wrapper {
 
 
-    private static Path dataset_path = Paths.get("./test/data/downloaded/");
+    private static Path dataset_path = Paths.get(System.getProperty("user.dir") + "/datasets/");
+    private static Path tripleGEO_Path = Paths.get(System.getProperty("user.dir") + "../TripleGeo");
     private static String geofabrik_areas_file = dataset_path.toString() + "/geofabrik_areas.ini";
 
 
-
-    public static void main(@NotNull String[] args) throws IOException {
-
+    public static void main(String[] args) throws IOException {
+        
         if (args.length >= 2) {
-            Extractor extractor = new Extractor();
+
             Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
             String config_filename = args[0];
             String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
@@ -105,9 +104,6 @@ public class Wrapper {
                     writer.write(new_text.toString());
                     writer.close();
 
-                    // calls Extractor using the produced configuration file
-                    String[] main_args = {"./test/conf/produced.conf"};
-                    extractor.main(main_args);
                 }
             }
 
