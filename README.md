@@ -1,4 +1,4 @@
-<h2>**TripleGeo_Extension**</h2>
+<h2>TripleGeo_Extension</h2>
 
 **Wrapper** (Currently) is a module outside of TripleGeo that downloads the datasets of the
  requested areas, from geofabrik, and forwards them to TripleGeo. 
