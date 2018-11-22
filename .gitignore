@@ -1,3 +1,6 @@
 
 \.idea/
 target/
+datasets/
+
+config/produced\.conf

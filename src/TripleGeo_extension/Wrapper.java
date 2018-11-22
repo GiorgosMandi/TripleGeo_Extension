@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,23 +15,20 @@ import java.util.Arrays;
 
 public class Wrapper {
 
-
-    private static Path dataset_path = Paths.get(System.getProperty("user.dir") + "/datasets/");
-    private static Path tripleGEO_Path = Paths.get(System.getProperty("user.dir") + "../TripleGeo");
-    private static String geofabrik_areas_file = dataset_path.toString() + "/geofabrik_areas.ini";
-
-
     public static void main(String[] args) throws IOException {
-        
-        if (args.length >= 2) {
 
+        if (args.length >= 2) {
+            String dataset_path = "./datasets/";
+            String tripleGEO_Path =  "../TripleGeo";
+            String geofabrik_areas_file = "./config/geofabrik_areas.ini";
             Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
+
             String config_filename = args[0];
             String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
 
             // Checks if the folder exist
-            if (!Files.exists(dataset_path))
-                new File(dataset_path.toString()).mkdirs();
+            if (!Files.exists(Paths.get(dataset_path)))
+                new File(dataset_path).mkdirs();
 
             int today = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).getDayOfYear();
             String[] paths = new String[requested_areas.length];
@@ -43,7 +39,7 @@ public class Wrapper {
             for (int i = 0; i < requested_areas.length; i++) {
                 System.out.println( "\n\n\n" + requested_areas[i] );
                 resolved = false;
-                paths[i] = dataset_path.toString() + "/" + requested_areas[i] + ".osm.pbf";
+                paths[i] = dataset_path + requested_areas[i] + ".osm.pbf";
                 String clean_area = requested_areas[i].toLowerCase().replace(" ", "_");
 
                 if (Files.exists(Paths.get(paths[i]))) {
@@ -100,7 +96,7 @@ public class Wrapper {
                         new_text.append(value);
                     }
                     reader.close();
-                    FileWriter writer = new FileWriter("./test/conf/produced.conf");
+                    FileWriter writer = new FileWriter("./config/produced.conf");
                     writer.write(new_text.toString());
                     writer.close();
 
