@@ -1,5 +1,6 @@
 package TripleGeo_extension;
 
+
 import org.ini4j.Ini;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -107,13 +108,10 @@ public class Wrapper {
                     writer.write(new_text.toString());
                     writer.close();
 
-
-                    Process exctractor_process = Runtime.getRuntime().exec(tripleGEO_command);
-
-                    if (exctractor_process.exitValue() == 0)
-                        System.out.println("TripleGeo execution of \"" + requested_areas[i] + "\" completed successfully");
-                    else
-                        System.out.println("TripleGeo execution of \"" + requested_areas[i] + "\" failed");
+                   /*
+                    * Create new process that will execute the Extractor with the right
+                    * arguments
+                   */
                 }
             }
 
