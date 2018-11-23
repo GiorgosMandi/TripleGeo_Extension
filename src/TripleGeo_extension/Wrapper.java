@@ -4,6 +4,7 @@ package TripleGeo_extension;
 import org.ini4j.Ini;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import utils.Configuration;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,21 +15,26 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 
 
+
+
 public class Wrapper {
 
     public static void main(String[] args) throws IOException {
 
         if (args.length >= 2) {
+            Configuration currentConfig = new Configuration(args[0]) ;
+
             String dataset_path = "./datasets/";
-            String tripleGEO_path = "../TripleGeo/";
-            String[] tripleGEO_command = {"java", "-cp", tripleGEO_path + "target/triplegeo-1.6-SNAPSHOT.jar",
-                    "eu.slipo.athenarc.triplegeo.Extractor"};
             String geofabrik_areas_file = "./config/geofabrik_areas.ini";
             String produced_config_file = "./config/produced.conf";
 
+
             // Checks if the folder exist
-            if (!Files.exists(Paths.get(dataset_path)))
-                new File(dataset_path).mkdirs();
+            if (!Files.exists(Paths.get(dataset_path))) {
+                if (!new File(dataset_path).mkdirs())
+                    System.out.println("Error: Cant create folder to store the downloaded datasets");
+
+            }
             if (!Files.exists(Paths.get(geofabrik_areas_file))) {
                 Ini_Constructor ini_constructor = new Ini_Constructor(geofabrik_areas_file);
                 ini_constructor.Construct_File();
@@ -108,10 +114,36 @@ public class Wrapper {
                     writer.write(new_text.toString());
                     writer.close();
 
-                   /*
-                    * Create new process that will execute the Extractor with the right
-                    * arguments
-                   */
+                    System.out.println("--------------------------");
+
+
+                    try {
+                        System.out.println(produced_config_file);
+                        Process tripleGeo_process = Runtime.getRuntime()
+                                .exec("java -cp " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
+                        tripleGeo_process.waitFor();
+                        System.out.println(tripleGeo_process.exitValue());
+
+                        BufferedReader process_error = new BufferedReader(new InputStreamReader(tripleGeo_process.getErrorStream()));
+                        String error_line;
+                        while ((error_line = process_error.readLine()) != null) {
+                            System.out.println(error_line);
+                        }
+
+                        System.out.println("--------------------------");
+                        BufferedReader process_output = new BufferedReader(new InputStreamReader(tripleGeo_process.getInputStream()));
+                        String process_line;
+                        while ((process_line = process_output.readLine()) != null) {
+                            System.out.println(process_line);
+                        }
+                        process_output.close();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
                 }
             }
 
