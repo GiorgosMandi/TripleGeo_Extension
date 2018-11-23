@@ -26,7 +26,7 @@ public class Wrapper {
 
             String dataset_path = "./datasets/";
             String geofabrik_areas_file = "./config/geofabrik_areas.ini";
-            String produced_config_file = "./config/produced.conf";
+            String produced_config_file = args[0].substring(0, args[0].lastIndexOf('/')) + "/produced.conf";
 
 
             // Checks if the folder exist
@@ -118,7 +118,8 @@ public class Wrapper {
 
 
                     try {
-                        System.out.println(produced_config_file);
+                        System.out.println(produced_config_file + " " + Files.exists(Paths.get(produced_config_file)));
+
                         Process tripleGeo_process = Runtime.getRuntime()
                                 .exec("java -cp " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
                         tripleGeo_process.waitFor();
@@ -142,7 +143,7 @@ public class Wrapper {
                     }
 
 
-
+                    //todo Delete the produced file
 
                 }
             }
