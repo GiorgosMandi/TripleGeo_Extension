@@ -29,7 +29,7 @@ public class Wrapper {
             String produced_config_file = args[0].substring(0, args[0].lastIndexOf('/')) + "/produced.conf";
 
 
-            // Checks if the folder exist
+            // Checks if the necessary files exist or else it creates them
             if (!Files.exists(Paths.get(dataset_path))) {
                 if (!new File(dataset_path).mkdirs())
                     System.out.println("Error: Cant create folder to store the downloaded datasets");
@@ -45,12 +45,11 @@ public class Wrapper {
             String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
 
 
-
             int today = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).getDayOfYear();
             String[] paths = new String[requested_areas.length];
             boolean resolved;
 
-            //firstly checks if a recent file exist, if it doesn't, it searches in .ini file to find the url in order
+            //firstly checks if a recent file exist. if it doesn't, it searches in .ini file to find the url in order
             // to download it
             for (int i = 0; i < requested_areas.length; i++) {
                 resolved = false;
@@ -114,9 +113,6 @@ public class Wrapper {
                     writer.write(new_text.toString());
                     writer.close();
 
-
-
-
                     try {
                         System.out.println("Executing TripleGeo for \"" + requested_areas[i] + "\"\n\n");
                         System.out.println("==================\tTripleGeo\t==================\n");
@@ -154,9 +150,8 @@ public class Wrapper {
                         e.printStackTrace();
                     }
 
-
-                    //todo Delete the produced file
-
+                    //deletes the produced file
+                    Files.deleteIfExists(Paths.get(produced_config_file));
                 }
             }
 
