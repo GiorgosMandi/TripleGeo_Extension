@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class Wrapper {
 
     public static void main(String[] args) throws IOException {
-
+        System.out.println("\n\n");
         if (args.length >= 2) {
             Configuration currentConfig = new Configuration(args[0]) ;
 
@@ -53,7 +53,6 @@ public class Wrapper {
             //firstly checks if a recent file exist, if it doesn't, it searches in .ini file to find the url in order
             // to download it
             for (int i = 0; i < requested_areas.length; i++) {
-                System.out.println( "\n\n\n" + requested_areas[i] );
                 resolved = false;
                 paths[i] = dataset_path + requested_areas[i] + ".osm.pbf";
                 String clean_area = requested_areas[i].toLowerCase().replace(" ", "_");
@@ -69,7 +68,7 @@ public class Wrapper {
                     }
                     int creation_day = LocalDateTime.ofInstant(creation_date, ZoneOffset.UTC).getDayOfYear();
                     if (creation_day == today) {
-                        System.out.println("Recent file for \"" + requested_areas[i] + "\" exists");
+                        System.out.println("Recent file for \"" + requested_areas[i] + "\" already exists");
                         resolved = true;
                     }
                 }
@@ -79,7 +78,8 @@ public class Wrapper {
                         if (clean_area.equals(area)) {
                             resolved = true;
                             String area_url = geofabrik_areas_ini.get("Areas").get(area);
-                            System.out.println("Downloads from " + area_url);
+                            System.out.println("Downloads from \"" + area_url + "\" for \"" + requested_areas[i] + "\"");
+                            System.out.println("Location: \"" + paths[i] + "\"");
 
                             //Downloads and stores the file in the dataset folder
                             Connection.Response resultImageResponse = Jsoup.connect(area_url).ignoreContentType(true).execute();
@@ -91,10 +91,10 @@ public class Wrapper {
                     }
                 }
                 if (!resolved){
-                    System.out.println("We couldn't resolve " + requested_areas[i]);
+                    System.out.println("Warning:\tWe couldn't resolve \"" + requested_areas[i] + "\"");
                 }
                 else {
-                    // rewrite the given configuration file changing its inputfile and its inputformat
+                    // modifies the given configuration file -- changes its inputfile and its inputformat
                     File config_file = new File(config_filename);
                     BufferedReader reader = new BufferedReader(new FileReader(config_file));
                     String line;
@@ -114,30 +114,42 @@ public class Wrapper {
                     writer.write(new_text.toString());
                     writer.close();
 
-                    System.out.println("--------------------------");
+
 
 
                     try {
-                        System.out.println(produced_config_file + " " + Files.exists(Paths.get(produced_config_file)));
+                        System.out.println("Executing TripleGeo for \"" + requested_areas[i] + "\"\n\n");
+                        System.out.println("==================\tTripleGeo\t==================\n");
 
+                        // Executes TripleGeo in a new process
                         Process tripleGeo_process = Runtime.getRuntime()
                                 .exec("java -cp " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
                         tripleGeo_process.waitFor();
-                        System.out.println(tripleGeo_process.exitValue());
 
+
+                        // Prints TripleGeo Errors
                         BufferedReader process_error = new BufferedReader(new InputStreamReader(tripleGeo_process.getErrorStream()));
                         String error_line;
                         while ((error_line = process_error.readLine()) != null) {
                             System.out.println(error_line);
                         }
 
-                        System.out.println("--------------------------");
+                        //Prints TripleGeo output
                         BufferedReader process_output = new BufferedReader(new InputStreamReader(tripleGeo_process.getInputStream()));
                         String process_line;
                         while ((process_line = process_output.readLine()) != null) {
                             System.out.println(process_line);
                         }
                         process_output.close();
+
+
+
+                        System.out.println("\n=============================================================\n");
+                        if (tripleGeo_process.exitValue() != 0 )
+                            System.out.println("Error:\tExecution Failed\n\n");
+                        else
+                            System.out.println("Execution completed Successfully\n\n");
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
