@@ -60,9 +60,14 @@ public final class Configuration {
     public String inputFiles;
 
     /**
-     * Path to the jar file of TripleGeo.
+     * Path to TripleGeo directory.
      */
     public String tripleGeo_path;
+
+    /**
+     * Path to TripleGeo jar file.
+     */
+    public String tripleGeo_jar;
 
 
     /**
@@ -117,9 +122,14 @@ public final class Configuration {
             inputFiles = properties.getProperty("inputFiles").trim();
         }
 
-        //Path to tripleGeo jar file
+        //Path to tripleGeo
         if (!isNullOrEmpty(properties.getProperty("tripleGeo_path"))) {
-            tripleGeo_path = properties.getProperty("inputFiles").trim();
+            tripleGeo_path = properties.getProperty("tripleGeo_path").trim();
+        }
+
+        //Path to tripleGeo jar file
+        if (!isNullOrEmpty(properties.getProperty("tripleGeo_jar"))) {
+            tripleGeo_jar = properties.getProperty("tripleGeo_jar").trim();
         }
     }
 
