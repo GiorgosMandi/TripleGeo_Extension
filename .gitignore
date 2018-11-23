@@ -4,3 +4,5 @@ target/
 datasets/
 
 config/produced\.conf
+
+output/
