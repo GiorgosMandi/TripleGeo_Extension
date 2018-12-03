@@ -32,8 +32,7 @@ public class Wrapper {
             // Checks if the necessary files exist or else it creates them
             if (!Files.exists(Paths.get(dataset_path))) {
                 if (!new File(dataset_path).mkdirs())
-                    System.out.println("Error: Cant create folder to store the downloaded datasets");
-
+                    System.out.println("Error:\tCant create folder to store the downloaded datasets");
             }
             if (!Files.exists(Paths.get(geofabrik_areas_file))) {
                 Ini_Constructor ini_constructor = new Ini_Constructor(geofabrik_areas_file);
@@ -49,8 +48,9 @@ public class Wrapper {
             String[] paths = new String[requested_areas.length];
             boolean resolved;
 
-            //firstly checks if a recent file exist. if it doesn't, it searches in .ini file to find the url in order
-            // to download it
+            //for all the requested areas does the following
+            // firstly checks if a recent file exist. if it doesn't, it searches in .ini file to find the url in order
+            // to download it. Then produces a copy of  the config file and forwards it to TripleGeo
             for (int i = 0; i < requested_areas.length; i++) {
                 resolved = false;
                 paths[i] = dataset_path + requested_areas[i] + ".osm.pbf";
@@ -73,6 +73,7 @@ public class Wrapper {
                 }
 
                 if (!resolved) {
+                    //Downloads and stores the file
                     for (String area : geofabrik_areas_ini.get("Areas").keySet()) {
                         if (clean_area.equals(area)) {
                             resolved = true;
@@ -138,8 +139,6 @@ public class Wrapper {
                         }
                         process_output.close();
 
-
-
                         System.out.println("\n=============================================================\n");
                         if (tripleGeo_process.exitValue() != 0 )
                             System.out.println("Error:\tExecution Failed\n\n");
@@ -149,12 +148,10 @@ public class Wrapper {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
                     //deletes the produced file
                     Files.deleteIfExists(Paths.get(produced_config_file));
                 }
             }
-
         }
         else{
             System.out.println("Wrong Input");
