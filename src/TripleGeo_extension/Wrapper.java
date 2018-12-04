@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
 
 
 
@@ -21,13 +20,15 @@ public class Wrapper {
 
     public static void main(String[] args) throws IOException {
         System.out.println("\n\n");
-        if (args.length >= 2) {
+        if (args.length == 1) {
             Configuration currentConfig = new Configuration(args[0]) ;
 
             String dataset_path = "./datasets/";
             String geofabrik_areas_file = "./config/geofabrik_areas.ini";
-            String produced_config_file = args[0].substring(0, args[0].lastIndexOf('/')) + "/produced.conf";
-
+            String config_filename = args[0];
+            String produced_config_file = config_filename.substring(0, args[0].lastIndexOf('/')) + "/produced.conf";
+            Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
+            String[] requested_areas = currentConfig.requested_areas.split("-");
 
             // Checks if the necessary files exist or else it creates them
             if (!Files.exists(Paths.get(dataset_path))) {
@@ -38,11 +39,6 @@ public class Wrapper {
                 Ini_Constructor ini_constructor = new Ini_Constructor(geofabrik_areas_file);
                 ini_constructor.Construct_File();
             }
-
-            Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
-            String config_filename = args[0];
-            String[] requested_areas = Arrays.copyOfRange(args, 1, args.length);
-
 
             int today = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).getDayOfYear();
             String[] paths = new String[requested_areas.length];
@@ -67,7 +63,7 @@ public class Wrapper {
                     }
                     int creation_day = LocalDateTime.ofInstant(creation_date, ZoneOffset.UTC).getDayOfYear();
                     if (creation_day == today) {
-                        System.out.println("Recent file for \"" + requested_areas[i] + "\" already exists");
+                        System.out.println("A recent file for \"" + requested_areas[i] + "\" already exists");
                         resolved = true;
                     }
                 }

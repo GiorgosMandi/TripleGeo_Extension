@@ -60,16 +60,14 @@ public final class Configuration {
     public String inputFiles;
 
     /**
-     * Path to TripleGeo directory.
-     */
-    public String tripleGeo_path;
-
-    /**
      * Path to TripleGeo jar file.
      */
     public String tripleGeo_jar;
 
-
+    /**
+     * the areas that their datasets will be forwarded to TripleGeo
+     */
+    public String  requested_areas;
     /**
      * Constructor of a Configuration object.
      * @param path   Path to a properties file containing all parameters to be used in the transformation.
@@ -122,14 +120,14 @@ public final class Configuration {
             inputFiles = properties.getProperty("inputFiles").trim();
         }
 
-        //Path to tripleGeo
-        if (!isNullOrEmpty(properties.getProperty("tripleGeo_path"))) {
-            tripleGeo_path = properties.getProperty("tripleGeo_path").trim();
-        }
-
         //Path to tripleGeo jar file
         if (!isNullOrEmpty(properties.getProperty("tripleGeo_jar"))) {
             tripleGeo_jar = properties.getProperty("tripleGeo_jar").trim();
+        }
+
+        // the areas that their datasets will be forwarded to TripleGeo
+        if (!isNullOrEmpty(properties.getProperty("requested_areas"))) {
+            requested_areas = properties.getProperty("requested_areas").trim();
         }
     }
 
