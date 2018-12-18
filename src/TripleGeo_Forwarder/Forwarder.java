@@ -1,4 +1,4 @@
-package TripleGeo_extension;
+package TripleGeo_Forwarder;
 
 
 import org.ini4j.Ini;
@@ -16,7 +16,7 @@ import java.time.ZoneOffset;
 
 
 
-public class Wrapper {
+public class Forwarder {
 
     public static void main(String[] args) throws IOException {
         System.out.println("\n\n");

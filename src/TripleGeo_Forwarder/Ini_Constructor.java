@@ -1,4 +1,4 @@
-package TripleGeo_extension;
+package TripleGeo_Forwarder;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,7 +10,8 @@ import java.util.List;
 
 
 class Ini_Constructor {
-    private String geofabrik_url = "https://download.geofabrik.de/";
+
+    private String geofabrik_url = " ";
     private String config_location;
 
 
@@ -19,7 +20,7 @@ class Ini_Constructor {
     }
 
 
-    private void search_geofabrik_tables(String url, PrintWriter writer, int level) throws IOException {
+    private void search_geofabrik_tables(String url, PrintWriter writer, int level) {
         try {
             Document doc = Jsoup.connect(url).get();
             Element region_table = doc.getElementById("subregions");
