@@ -91,7 +91,7 @@ public class Forwarder {
                 }
                 else {
                     // creates the output directory -- Each requested area's results will be stored on its own directory
-                    String outputDir =  (currentConfig.outputDir.indexOf(currentConfig.outputDir.length()) != '/') ?
+                    String outputDir =  (currentConfig.outputDir.charAt(currentConfig.outputDir.length()-1) != '/') ?
                             currentConfig.outputDir + "/" + requested_areas[i] : currentConfig.outputDir + requested_areas[i];
                     if (!Files.exists(Paths.get(outputDir))) {
                         if (!new File(outputDir).mkdirs())
