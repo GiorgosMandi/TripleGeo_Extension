@@ -21,3 +21,7 @@ This file is constructed by Ini_Constructor.java which uses web scraping techniq
 **Forwarder**
 
 This routine firstly reads from the configuration file the path to TripleGeo’s jar file and the requested regions. For every region it checks whether an already downloaded dataset exist and if it is a recent one. In case it doesn’t exist or it is an old one, it searches in geofabrik_area.ini file and downloads the datasets from the corresponding links. When it complete downloading the dataset, it creates a duplicate of the configuration file and modifies the fields that are relevant with datasets’	 properties. Then it executes TripleGeo in a new process, giving it as an argument the new configuration file. This procedure is executed for every requested area and the results will be stored in the location that was defined in the configuration file.
+
+
+**Execution**
+java -cp <path to JAR file> TripleGeo_Forwarder.Forwarder <path to configuration file>
