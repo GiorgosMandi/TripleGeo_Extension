@@ -23,7 +23,7 @@ public class Forwarder {
         if (args.length == 1) {
             Configuration currentConfig = new Configuration(args[0]) ;
 
-            String dataset_path = "./datasets/";
+            String dataset_path = currentConfig.dataset_location;
             String geofabrik_areas_file = "./config/geofabrik_areas.ini";
             String config_filename = args[0];
             String produced_config_file = config_filename.substring(0, args[0].lastIndexOf('/')) + "/produced.conf";
@@ -33,7 +33,7 @@ public class Forwarder {
             // Checks if the necessary files exist or else it creates them
             if (!Files.exists(Paths.get(dataset_path))) {
                 if (!new File(dataset_path).mkdirs())
-                    System.out.println("Error:\tCant create folder to store the downloaded datasets");
+                    System.out.println("Error:\tCant create the folder in which it will store the downloaded datasets");
             }
             if (!Files.exists(Paths.get(geofabrik_areas_file))) {
                 Ini_Constructor ini_constructor = new Ini_Constructor(geofabrik_areas_file);
