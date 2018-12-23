@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>giorgosmandi</groupId>
-    <artifactId>TripleGeo_Extension</artifactId>
+    <artifactId>TripleGeo_Forwarder</artifactId>
     <version>1.6-SNAPSHOT</version>
 
     <properties>
@@ -85,7 +85,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>TripleGeo_extension.Wrapper</mainClass>
+                            <mainClass>TripleGeo_Forwarder.Forwarder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
