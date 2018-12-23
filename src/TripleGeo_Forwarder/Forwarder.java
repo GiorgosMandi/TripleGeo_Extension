@@ -33,7 +33,7 @@ public class Forwarder {
             // Checks if the necessary files exist or else it creates them
             if (!Files.exists(Paths.get(dataset_path))) {
                 if (!new File(dataset_path).mkdirs())
-                    System.out.println("Error:\tCant create the folder in which it will store the downloaded datasets");
+                    System.out.println("Error:\tCould not create the folder, in which it will store the downloaded datasets");
             }
             if (!Files.exists(Paths.get(geofabrik_areas_file))) {
                 Ini_Constructor ini_constructor = new Ini_Constructor(geofabrik_areas_file);
@@ -74,8 +74,8 @@ public class Forwarder {
                         if (clean_area.equals(area)) {
                             resolved = true;
                             String area_url = geofabrik_areas_ini.get("Areas").get(area);
-                            System.out.println("Downloads from \"" + area_url + "\" for \"" + requested_areas[i] + "\"");
-                            System.out.println("Location: \"" + paths[i] + "\"");
+                            System.out.println("Downloads \"" + area_url + "\" for \"" + requested_areas[i] + "\"");
+                            System.out.println("Storing file in \"" + paths[i] + "\"");
 
                             //Downloads and stores the file in the dataset folder
                             Connection.Response resultImageResponse = Jsoup.connect(area_url).ignoreContentType(true).execute();
@@ -90,6 +90,14 @@ public class Forwarder {
                     System.out.println("Warning:\tWe couldn't resolve \"" + requested_areas[i] + "\"");
                 }
                 else {
+                    // creates the output directory -- Each requested area's results will be stored on its own directory
+                    String outputDir =  (currentConfig.outputDir.indexOf(currentConfig.outputDir.length()) != '/') ?
+                            currentConfig.outputDir + "/" + requested_areas[i] : currentConfig.outputDir + requested_areas[i];
+                    if (!Files.exists(Paths.get(outputDir))) {
+                        if (!new File(outputDir).mkdirs())
+                            System.out.println("Error:\tCould not create the folder, in which it will store the results");
+                    }
+
                     // modifies the given configuration file -- changes its inputfile and its inputformat
                     File config_file = new File(config_filename);
                     BufferedReader reader = new BufferedReader(new FileReader(config_file));
@@ -101,6 +109,8 @@ public class Forwarder {
                             value = "inputFormat = OSM_PBF" + "\r\n";
                         else if (line.contains("inputFiles"))
                             value = "inputFiles = " + paths[i] + "\r\n";
+                        else if (line.contains("outputDir"))
+                            value = "outputDir = " + outputDir + "\r\n";
                         else
                             value = line + "\r\n";
                         new_text.append(value);

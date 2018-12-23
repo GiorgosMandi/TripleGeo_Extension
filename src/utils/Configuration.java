@@ -73,6 +73,11 @@ public final class Configuration {
      * the path to the folder that datasets will be stored
      */
     public String  dataset_location;
+
+    /**
+     * the path to the folder that results will be stored
+     */
+    public String  outputDir;
     /**
      * Constructor of a Configuration object.
      * @param path   Path to a properties file containing all parameters to be used in the transformation.
@@ -133,9 +138,13 @@ public final class Configuration {
         if (!isNullOrEmpty(properties.getProperty("requested_areas"))) {
             requested_areas = properties.getProperty("requested_areas").trim();
         }
-        // the areas that their datasets will be forwarded to TripleGeo
+        // the path to the folder that datasets will be stored
         if (!isNullOrEmpty(properties.getProperty("dataset_location"))) {
             dataset_location = properties.getProperty("dataset_location").trim();
+        }
+        // the path to the folder that results will be stored
+        if (!isNullOrEmpty(properties.getProperty("outputDir"))) {
+            outputDir = properties.getProperty("outputDir").trim();
         }
     }
 
