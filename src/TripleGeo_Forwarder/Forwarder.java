@@ -7,12 +7,13 @@ import org.jsoup.Jsoup;
 import utils.Configuration;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-
+import org.apache.commons.io.FileUtils;
 
 
 
@@ -79,10 +80,14 @@ public class Forwarder {
                             System.out.println("Storing file in \"" + paths[i] + "\"");
 
                             //Downloads and stores the file in the dataset folder
-                            Connection.Response resultImageResponse = Jsoup.connect(area_url).ignoreContentType(true).execute();
-                            FileOutputStream out = (new FileOutputStream(new java.io.File(paths[i])));
-                            out.write(resultImageResponse.bodyAsBytes());  // resultImageResponse.body() is where the image's contents are.
-                            out.close();
+                            try {
+                                URL url = new URL(area_url);
+                                File dest = new File(paths[i]);
+                                FileUtils.copyURLToFile(url,  dest);
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+
                             break;
                         }
                     }
