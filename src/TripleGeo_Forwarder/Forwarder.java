@@ -47,6 +47,7 @@ public class Forwarder {
             //for all the requested areas does the following
             // firstly checks if a recent file exist. if it doesn't, it searches in .ini file to find the url in order
             // to download it. Then produces a copy of  the config file and forwards it to TripleGeo
+            long start = System.currentTimeMillis();
             for (int i = 0; i < requested_areas.length; i++) {
                 resolved = false;
                 paths[i] = dataset_path + requested_areas[i] + ".osm.pbf";
@@ -158,6 +159,9 @@ public class Forwarder {
                     Files.deleteIfExists(Paths.get(produced_config_file));
                 }
             }
+            long elapsed = System.currentTimeMillis() - start;
+
+            System.out.println(String.format("Execution time: %d ms.", elapsed));
         }
         else{
             System.out.println("Wrong Input");
