@@ -29,7 +29,7 @@ public class Forwarder {
             String config_filename = args[0];
             String produced_config_file = config_filename.substring(0, args[0].lastIndexOf('/')) + "/produced.conf";
             Ini geofabrik_areas_ini = new Ini(new File(geofabrik_areas_file));
-            String[] requested_areas = currentConfig.requested_areas.split("-");
+            String[] requested_areas = currentConfig.requested_areas.split(";");
 
             // Checks if the necessary files exist or else it creates them
             if (!Files.exists(Paths.get(dataset_path))) {
