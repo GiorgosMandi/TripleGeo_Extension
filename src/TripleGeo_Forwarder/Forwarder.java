@@ -2,8 +2,6 @@ package TripleGeo_Forwarder;
 
 
 import org.ini4j.Ini;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import utils.Configuration;
 
 import java.io.*;
@@ -133,21 +131,25 @@ public class Forwarder {
                         // Executes TripleGeo in a new process
                         Process tripleGeo_process = Runtime.getRuntime()
                                 .exec("java -cp " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
-                        tripleGeo_process.waitFor();
-
+                        //tripleGeo_process.waitFor();
 
                         // Prints TripleGeo Errors
                         BufferedReader process_error = new BufferedReader(new InputStreamReader(tripleGeo_process.getErrorStream()));
-                        String error_line;
-                        while ((error_line = process_error.readLine()) != null) {
-                            System.out.println(error_line);
+                        BufferedReader process_output = new BufferedReader(new InputStreamReader(tripleGeo_process.getInputStream()));
+                        while(tripleGeo_process.isAlive()) {
+
+                            //Prints TripleGeo output
+                            String process_line;
+                            if ((process_line = process_output.readLine()) != null) {
+                                System.out.println(process_line);
+                            }
                         }
 
-                        //Prints TripleGeo output
-                        BufferedReader process_output = new BufferedReader(new InputStreamReader(tripleGeo_process.getInputStream()));
-                        String process_line;
-                        while ((process_line = process_output.readLine()) != null) {
-                            System.out.println(process_line);
+                        tripleGeo_process.waitFor();
+
+                        String error_line;
+                        if ((error_line = process_error.readLine()) != null) {
+                            System.out.println(error_line);
                         }
                         process_output.close();
 
