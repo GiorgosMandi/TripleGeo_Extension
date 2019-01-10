@@ -140,7 +140,7 @@ public class Forwarder {
 
                             //Prints TripleGeo output
                             String process_line;
-                            if ((process_line = process_output.readLine()) != null) {
+                            while ((process_line = process_output.readLine()) != null) {
                                 System.out.println(process_line);
                             }
                         }
@@ -148,7 +148,7 @@ public class Forwarder {
                         tripleGeo_process.waitFor();
 
                         String error_line;
-                        if ((error_line = process_error.readLine()) != null) {
+                        while ((error_line = process_error.readLine()) != null) {
                             System.out.println(error_line);
                         }
                         process_output.close();
