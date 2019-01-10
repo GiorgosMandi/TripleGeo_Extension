@@ -74,7 +74,7 @@ public class Forwarder {
                         if (clean_area.equals(area)) {
                             resolved = true;
                             String area_url = geofabrik_areas_ini.get("Areas").get(area);
-                            System.out.println("Downloads \"" + area_url + "\" for \"" + requested_areas[i] + "\"");
+                            System.out.println("Downloading \"" + area_url + "\" for \"" + requested_areas[i] + "\"");
                             System.out.println("Storing file in \"" + paths[i] + "\"");
 
                             //Downloads and stores the file in the dataset folder
