@@ -15,4 +15,4 @@ In https://download.geofabrik.de/ is located Geofabrik’s free download server.
 
 
 **Execution**
-java -cp <path to JAR file> TripleGeo_Forwarder.Forwarder <path to the configuration file>
+java -cp \<path to JAR file\> TripleGeo_Forwarder.Forwarder \<path to the configuration file\>
