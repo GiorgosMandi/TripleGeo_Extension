@@ -5,7 +5,14 @@ TripleGeo_Forwarder’s primary purpose is to massively convert OSM data into RD
 
 **Input - Configuration Settings**
 
-TripleGeo requires a configuration file as its input. For TripleGeo_Forwarder purposes, in this configuration file user can specify his requested regions in the “requested_areas” field separated by semicolons(“;”). Furthermore he must declare the path to his TripleGeo jar file in the “tripleGeo_jar” field, in order Forwarder to be able to locate it. Those two fields are required for the execution of TripleGeo_Forwarder.
+TripleGeo requires a configuration file as its input. For TripleGeo_Forwarder purposes, the user must initialise some fundamental variables in the configuration file. 
+ 
+* The requested regions are declared in the “**requested_areas**” field separated by semicolons(“;”).
+* The users must specify the location of TripleGeo jar file in the “**tripleGeo_jar**” field
+* The location in which the downloaded datasets will be stored is specified in the "**dataset_location**" field.
+* The "**inputFile**" field must be empty.
+
+Those fields are required to be initialised inside the configuration file, for the execution of TripleGeo_Forwarder. Also the configuration file must contain all the necessary fields for the execution of TripleGeo
 
 
 **Geofabrik’s Download Server**
