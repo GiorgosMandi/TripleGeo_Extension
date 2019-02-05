@@ -11,7 +11,7 @@ import java.util.List;
 
 class Ini_Constructor {
 
-    private String geofabrik_url = " ";
+    private String geofabrik_url = "http://download.geofabrik.de/";
     private String config_location;
 
 
@@ -59,7 +59,7 @@ class Ini_Constructor {
 
                     writer.println(area_label + " = " + area_url);
                     System.out.println(area_label + " = " + area_url + "\n\n");
-                    String next_area_url = geofabrik_url + anchors_continent.get(0).attr("href");
+                    String next_area_url = url.substring(0, url.lastIndexOf("/")+1) + anchors_continent.get(0).attr("href");
                     search_geofabrik_tables(next_area_url, writer, level+1);
                 }
             }
