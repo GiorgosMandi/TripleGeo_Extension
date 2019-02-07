@@ -5,6 +5,7 @@ import org.ini4j.Ini;
 import utils.Configuration;
 
 import java.io.*;
+import java.util.List;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,6 +14,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.apache.commons.io.FileUtils;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+
 
 
 public class Forwarder {
@@ -20,6 +24,16 @@ public class Forwarder {
     public static void main(String[] args) throws IOException {
         System.out.println("\n\n");
         if (args.length == 1) {
+
+            RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+            List <String> java_arg = runtimeMxBean.getInputArguments();
+            String mem_arg = "";
+
+            //Pass execution flags to the execution of TriplGeo
+            //NOTE: not the optimal way
+            if (java_arg.size() > 3)
+                mem_arg = java_arg.get(1);
+
             Configuration currentConfig = new Configuration(args[0]) ;
 
             String dataset_path = currentConfig.dataset_location;
@@ -130,7 +144,7 @@ public class Forwarder {
 
                         // Executes TripleGeo in a new process
                         Process tripleGeo_process = Runtime.getRuntime()
-                                .exec("java -cp " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
+                                .exec("java -cp " + mem_arg + " " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
                         //tripleGeo_process.waitFor();
 
                         // Prints TripleGeo Errors
