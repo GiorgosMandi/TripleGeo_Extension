@@ -29,10 +29,12 @@ public class Forwarder {
             List <String> java_arg = runtimeMxBean.getInputArguments();
             String mem_arg = "";
 
-            //Pass execution flags to the execution of TriplGeo
-            //NOTE: not the optimal way
-            if (java_arg.size() > 3)
-                mem_arg = java_arg.get(1);
+            //Pass execution flags to the execution of TripleGeo
+            System.out.println(java_arg.get(0));
+            if (java_arg.size() > 0 )
+                for (String s : java_arg){
+                    mem_arg += s + " ";
+                }
 
             Configuration currentConfig = new Configuration(args[0]) ;
 
@@ -143,8 +145,9 @@ public class Forwarder {
                         System.out.println("==================\tTripleGeo\t==================\n");
 
                         // Executes TripleGeo in a new process
+                        System.out.println("-->"+mem_arg);
                         Process tripleGeo_process = Runtime.getRuntime()
-                                .exec("java -cp " + mem_arg + " " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
+                                .exec("java " + mem_arg + " -cp " + currentConfig.tripleGeo_jar + " eu.slipo.athenarc.triplegeo.Extractor " + produced_config_file);
                         //tripleGeo_process.waitFor();
 
                         // Prints TripleGeo Errors
